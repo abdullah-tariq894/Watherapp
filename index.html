@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Weather App</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins', sans-serif;
+}
+
+body{
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  /* background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80'); */
+  background: linear-gradient(135deg, #1e3c72, #2a5298);
+}
+
+.card{
+  width:380px;
+  padding:30px;
+  border-radius:20px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(15px);
+  text-align:center;
+  color:white;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+}
+
+h2{
+  margin-bottom:20px;
+}
+
+input{
+  width:80%;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+  outline:none;
+  margin-bottom:10px;
+}
+
+button{
+  padding:10px 20px;
+  border:none;
+  border-radius:10px;
+  background:#00c6ff;
+  color:white;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  background:#0072ff;
+}
+
+#result{
+  margin-top:20px;
+  font-size:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2 id="title">🌤 Weather App</h2>
+  <input type="text" id="city" placeholder="Enter city">
+  <br>
+  <button onclick="getWeather()">Check</button>
+  <div id="result"></div>
+</div>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+// 🔥 Page Animation
+gsap.from(".card", {
+  y: 100,
+  opacity: 0,
+  duration: 1
+});
+
+gsap.from("#title", {
+  scale: 0,
+  duration: 1,
+  delay: 0.5
+});
+
+// Weather Function
+async function getWeather(){
+  let city = document.getElementById("city").value;
+
+//   let apiKey = "YOUR_API_KEY";
+  let apiKey = "41a4494fd4910b5099c56ebe596c8004"; // new key
+  let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+  try {
+    let res = await fetch(url);
+    let data = await res.json();
+
+    if(data.cod != 200){
+      document.getElementById("result").innerHTML = "❌ City not found";
+      return;
+    }
+
+    document.getElementById("result").innerHTML = `
+      🌍 ${city} <br>
+      🌡 Temp: ${data.main.temp}°C <br>
+      ☁ Condition: ${data.weather[0].main}
+    `;
+
+    // 🔥 Result Animation
+    gsap.from("#result", {
+      y: 50,
+      opacity: 0,
+      duration: 0.8
+    });
+
+  } catch {
+    document.getElementById("result").innerHTML = "Error ❌";
+  }
+}
+</script>
+
+</body>
+</html>
